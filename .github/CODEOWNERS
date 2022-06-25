@@ -1,0 +1,4 @@
+* @leandromoreirati
+*.js @leandromoreirati
+*.yml @leandromoreirati
+/public/ @leandromoreirati
