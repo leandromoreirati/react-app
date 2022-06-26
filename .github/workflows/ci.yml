@@ -18,11 +18,11 @@ jobs:
           path: ~/.npm
           # Garante que o cache permance atualizado sempre que ocorrer 
           # uma alteração no arquivo {{ package-lock.json }} ou uma alteração
-          # no sistema operacional {{ runners.os }}
+          # no sistema operacional {{ runner.os }}
           # https://github.com/actions/cache
-          key: ${{ runners.os }}-node-${{ hashFiles("**/package-lock.json") }}
+          key: ${{ runner.os }}-node-${{ hashFiles("**/package-lock.json") }}
           restore-key: |
-            ${{ runners.os }}-node-
+            ${{ runner.os }}-node-
       - name: Use NodeJS
         uses: actions/setup-node@v3
         with:
