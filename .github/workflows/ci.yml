@@ -2,9 +2,9 @@ name: CI
 
 on: 
   pull_request:
-    branches: [develop, main]
+    branches: [develop, master]
   push:
-    branches: [develop, main]
+    branches: [develop, master]
       
 jobs:
   build:
@@ -50,7 +50,7 @@ jobs:
       - name: Download artfact
         uses: actions/download-artifact@v3
       - name: Create a Release
-        if: github.event_name =='push' && github.ref =='refs/heads/main'
+        if: github.event_name =='push' && github.ref =='refs/heads/master'
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
