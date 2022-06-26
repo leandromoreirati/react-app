@@ -1,7 +1,7 @@
 name: Notfy on Release
 
 on:
-  release:
+  issues:
     type: [opened]
 
 jobs:
