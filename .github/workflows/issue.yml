@@ -1,4 +1,4 @@
-name: Notfy on Release
+name: Notfy on Issue
 
 on:
   issues:
