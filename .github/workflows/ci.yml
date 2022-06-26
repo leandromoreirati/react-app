@@ -2,31 +2,78 @@ name: CI
 
 on: 
   pull_request:
-    branches: [develop]
+    branches: [develop, master]
   push:
-    branches:
-      - develop
-
+    branches: [develop, master]
+      
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+      SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
     steps:
       - uses: actions/checkout@v3
+      - name: cache node_models
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          # Garante que o cache permance atualizado sempre que ocorrer 
+          # uma alteração no arquivo {{ package-lock.json }} ou uma alteração
+          # no sistema operacional {{ runner.os }}
+          # https://github.com/actions/cache
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - name: Use NodeJS
         uses: actions/setup-node@v3
         with:
-          node-version: "12.x"
+          node-version: "14.x"
       - run: npm ci
       - run: npm run format:check
+      #- run: npm run format
+      #  if: failure()
       - run: npm run test -- --coverage
         env:
           CI: true
+      - name: Upload Test Coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage
+          path: coverage
       - name: Build Project
         if: github.event_name =='push'
         run: npm run build
-      - name: Deploy to staging
+      - name: Upload Build Folders
         if: github.event_name =='push'
-        run: npx surge --project ./build --domain glib-yard.surge.sh
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: build
+      - name: ZIP
+        if: github.event_name =='push' && github.ref =='refs/heads/master'
+        run: |
+          zip -r build.zip ./build
+          zip -r coverage.zip ./coverage
+      - name: Download artfact
+        uses: actions/download-artifact@v3
+      - name: Create a Release
+        if: github.event_name =='push' && github.ref =='refs/heads/master'
+        run: npx semantic-release
         env:
-          SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
-          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
+      - name: Deploy to staging
+        if: github.event_name =='push' &&  github.ref =='refs/heads/develop'
+        run: npx surge --project ./build --domain glib-yard.surge.sh
+      - name: Deploy to production
+        if: github.event_name =='push' &&  github.ref =='refs/heads/master'
+        run: npx surge --project ./build --domain drab-reading.surge.sh
+      - name: Upload Codecov Reports
+        if: github.event_name =='push' &&  github.ref =='refs/heads/master'
+        run: npx codecov
+        env:
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+
+
+
+
