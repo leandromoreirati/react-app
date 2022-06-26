@@ -20,7 +20,7 @@ jobs:
           # uma alteração no arquivo {{ package-lock.json }} ou uma alteração
           # no sistema operacional {{ runner.os }}
           # https://github.com/actions/cache
-          key: ${{ runner.os }}-node-${{ hashFiles("**/package-lock.json") }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-key: |
             ${{ runner.os }}-node-
       - name: Use NodeJS
