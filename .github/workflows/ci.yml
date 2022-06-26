@@ -68,7 +68,7 @@ jobs:
       - name: Deploy to production
         if: github.event_name =='push' &&  github.ref =='refs/heads/master'
         run: npx surge --project ./build --domain drab-reading.surge.sh
-      - name: Upload Codecov
+      - name: Upload Codecov Reports
         if: github.event_name =='push' &&  github.ref =='refs/heads/master'
         run: npx codecov
         env:
