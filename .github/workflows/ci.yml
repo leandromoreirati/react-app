@@ -32,9 +32,21 @@ jobs:
       - run: npm run test -- --coverage
         env:
           CI: true
+      - name: Upload Test Coverage
+      - uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage
+          path: coverage
       - name: Build Project
         if: github.event_name =='push'
         run: npm run build
+      - name: Upload Build Foldes
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: build
+      - name: Upload artfact
+        uses: actions/download-artifact@v3
       - name: Deploy to staging
         if: github.event_name =='push'
         run: npx surge --project ./build --domain glib-yard.surge.sh
