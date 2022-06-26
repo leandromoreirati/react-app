@@ -45,8 +45,8 @@ jobs:
         with:
           name: build
           path: build
-      - name: Upload artfact
-        uses: actions/download-artifact@v3
+      #- name: Download artfact
+      #  uses: actions/download-artifact@v3
       - name: Deploy to staging
         if: github.event_name =='push'
         run: npx surge --project ./build --domain glib-yard.surge.sh
