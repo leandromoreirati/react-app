@@ -44,7 +44,7 @@ jobs:
       - name: Build Project
         if: github.event_name =='push'
         run: npm run build
-      - name: Upload Build Foldes
+      - name: Upload Build Folders
         if: github.event_name =='push'
         uses: actions/upload-artifact@v3
         with:
