@@ -55,8 +55,8 @@ jobs:
         run: |
           zip -r build.zip ./build
           zip -r coverage.zip ./coverage
-      - name: Download artfact
-        uses: actions/download-artifact@v3
+     #- name: Download artfact
+     #  uses: actions/download-artifact@v3
       - name: Create a Release
         if: github.event_name =='push' && github.ref =='refs/heads/master'
         run: npx semantic-release
