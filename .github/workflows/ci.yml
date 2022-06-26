@@ -70,12 +70,7 @@ jobs:
         run: npx surge --project ./build --domain drab-reading.surge.sh
       - name: Upload Codecov
         if: github.event_name =='push' &&  github.ref =='refs/heads/master'
-        run: npx codevoc
+        run: npx codecov
         env:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-          files: ./coverage1.xml,./coverage2.xml # optional
-          flags: unittests # optional
-          name: codecov-umbrella # optional
-          fail_ci_if_error: true # optional (default = false)
-          verbose: true # optional (default = false)
 
