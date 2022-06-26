@@ -31,8 +31,8 @@ jobs:
           node-version: "14.x"
       - run: npm ci
       - run: npm run format:check
-      - if: ${{ failure() }}
-        run: npm run format
+      #- run: npm run format
+      #  if: failure()
       - run: npm run test -- --coverage
         env:
           CI: true
@@ -55,8 +55,8 @@ jobs:
         run: |
           zip -r build.zip ./build
           zip -r coverage.zip ./coverage
-     #- name: Download artfact
-     #  uses: actions/download-artifact@v3
+      - name: Download artfact
+        uses: actions/download-artifact@v3
       - name: Create a Release
         if: github.event_name =='push' && github.ref =='refs/heads/master'
         run: npx semantic-release
@@ -73,4 +73,19 @@ jobs:
         run: npx codecov
         env:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+      - name: Open Issue
+        if: failure() && github.event_name =='pull_request'
+        run: |
+          curl --request POST \
+          --url https://api.github.com/repos/${{ github.repository }}/issues \
+          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+          --header 'content-type: application/json' \
+          --data '{
+            "title": "Automated issue for commit: ${{ github.sha }}",
+            "body": "This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n The commit hash was: _${{ github.sha }}_.",
+            "assignees": ["${{ github.event.pull_request.user.login}}"]
+            }' \
+          --fail
+
+
 
