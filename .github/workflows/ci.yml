@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+      SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
     steps:
       - uses: actions/checkout@v3
       - name: cache node_models
@@ -60,9 +63,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Deploy to staging
-        if: github.event_name =='push'
+        if: github.event_name =='push' &&  github.ref =='refs/heads/develop'
         run: npx surge --project ./build --domain glib-yard.surge.sh
+      - name: Deploy to production
+        if: github.event_name =='push' &&  github.ref =='refs/heads/master'
+        run: npx surge --project ./build --domain drab-reading.surge.sh
+      - name: Upload Codecov
+        if: github.event_name =='push' &&  github.ref =='refs/heads/master'
+        uses: codecov/codecov-action@v2
+        run: npx codevoc
         env:
-          SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
-          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          files: ./coverage1.xml,./coverage2.xml # optional
+          flags: unittests # optional
+          name: codecov-umbrella # optional
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
 
