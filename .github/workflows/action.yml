@@ -13,7 +13,6 @@ jobs:
           body: Body
           assignees: |
             leandromoreirati
-            abacate
       - run: |
           echo ${{ steps.id.outputs.issue }}
       - uses: ./.github/actions/hello
