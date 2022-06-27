@@ -12,7 +12,7 @@ jobs:
           title: Title
           body: Body
           assignees: |
-            bablabla
+            leandromoreirati
             abacate
       - run: |
           echo ${{ steps.id.outputs.issue }}
